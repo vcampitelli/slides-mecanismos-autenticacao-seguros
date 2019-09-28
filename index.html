@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="author" content="Vinícius Campitelli">
+        <meta name="description" content="Uma das partes mais básicas de um sistema é seu processo de login. E por ser algo que não agrega valor direto ao negócio, acabamos não gastando o tempo necessário para criar um fluxo realmente seguro, fazendo com que ele se torne o principal vetor de ataques de nossa aplicação. Iremos aprender como criar mecanismos seguros de autenticação, utilizando CSRF de forma correta, CAPTCHA, duplo fator de autenticação, prevenção à enumeração de usuários e outras técnias para dificultar ataques. Veremos também diversas dicas de como implementar as arriscadas (mas muitas vezes necessárias) funções 'Permanecer logado' e 'Esqueci a senha'.">
+
+        <title>Criando mecanismos de autenticação seguros</title>
+
+        <link rel="stylesheet" href="reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="reveal.js/css/theme/moon.css">
+        <!-- <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap" rel="stylesheet"> -->
+        <link rel="stylesheet" href="css/prism.css">
+        <link rel="stylesheet" href="css/app.css">
+
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'reveal.js/' + (window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css');
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>Criando mecanismos de autenticação seguros</h1>
+                </section>
+
+                <section>
+                    <h2>Quem sou eu?</h2>
+                    <ul>
+                        <li>Vinícius Campitelli &mdash; <a href="http://vcampitelli.github.io">vcampitelli.github.io</a></li>
+                        <li>Arquiteto na <a href="https://mt4.com.br" target="_blank">MT4 Tecnologia</a></li>
+                        <li>Sócio-fundador no <a href="https://curseduca.pro" target="_blank">Curseduca</a></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Agenda</h2>
+                    <ul class="no-padding">
+                        <li>Utilizando CSRF de forma correta;</li>
+                        <li>CAPTCHA;</li>
+                        <li>Duplo fator de autenticação;</li>
+                        <li>Prevenção à enumeração de usuários;</li>
+                        <li>Outras técnicas para dificultar ataques;</li>
+                        <li>Funcionalidade "Permanecer logado";</li>
+                        <li>Funcionalidade "Esqueci a senha".</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Utilizando CSRF de forma correta</h2>
+                    </section>
+                    <section>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>CAPTCHA</h2>
+                    </section>
+                    <section>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Duplo fator de autenticação</h2>
+                    </section>
+                    <section>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Prevenção à enumeração de usuários</h2>
+                    </section>
+                    <section>
+                        O que um sistema que rode o código a seguir pode dar de informação a um atacante?
+                    </section>
+                    <section>
+                        <pre><code class="language-php line-numbers">public function login(string $username, string $password) : bool
+{
+    $user = $this->findByUsername($username);
+    if (! $user) {
+        return false;
+    }
+    return $this->verifyPassword($password, $user->getPassword());
+}</code></pre>
+                    </section>
+                    <section>
+                        <p>É possível saber que usuários existem em sua aplicação através de <em>timing attack</em></p>
+                        <p class="fragment">Modifique o código para que a custosa função <code>verifyPassword</code> seja sempre invocada!</p>
+                    </section>
+                    <section>
+                        <pre><code class="language-php line-numbers">public function login(string $username, string $password) : bool
+{
+    $storedPassword = $this->generateFakePassword();
+    $user = $this->findByUsername($username);
+    if ($user) {
+        $storedPassword = $user->getPassword();
+    }
+    return ($this->verifyPassword($password, $storedPassword))
+        && ($user !== null);
+}</code></pre>
+                    </section>
+                    <section>
+                        <p>Será que não estamos exagerando?<br>É realmente possível ver essa diferença?</p><br>
+                        <p class="fragment">
+                            Vamos testar, então!<br><br>
+                            <small>Executando os scripts <code>login-user-enumeration.php</code><br>e <code>login-user-enumeration-fixed.php</code></small>
+                        </p>
+                    </section>
+                    <section>
+                        <video controls>
+                            <source src="scripts/login-user-enumeration.mp4">
+                        </video>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Outras técnicas para dificultar ataques</h2>
+                    </section>
+                    <section>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Funcionalidade "Permanecer logado"</h2>
+                    </section>
+                    <section>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Funcionalidade "Esqueci a senha"</h2>
+                    </section>
+                    <section>
+                    </section>
+                </section>
+            </div>
+        </div>
+
+        <script src="reveal.js/js/reveal.js"></script>
+        <script>
+            Reveal.initialize({
+                dependencies: [
+                    { src: 'js/prism.js', async: true }
+                ],
+                transition: 'convex',
+                slideNumber: true,
+                mouseWheel: false,
+                history: true,
+                overview: false
+            });
+        </script>
+    </body>
+</html>
