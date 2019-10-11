@@ -10,7 +10,7 @@
 
         <link rel="stylesheet" href="reveal.js/css/reveal.css">
         <link rel="stylesheet" href="reveal.js/css/theme/moon.css">
-        <!-- <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap" rel="stylesheet"> -->
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/prism.css">
         <link rel="stylesheet" href="css/app.css">
 
@@ -41,7 +41,7 @@
                 <section>
                     <h2>Agenda</h2>
                     <ul class="no-padding">
-                        <li>Utilizando CSRF de forma correta;</li>
+                        <li>Protegendo CSRF de forma correta;</li>
                         <li>CAPTCHA;</li>
                         <li>Duplo fator de autenticação;</li>
                         <li>Prevenção à enumeração de usuários;</li>
@@ -53,9 +53,69 @@
 
                 <section>
                     <section>
-                        <h2>Utilizando CSRF de forma correta</h2>
+                        <h2>Protegendo CSRF de forma correta</h2>
                     </section>
                     <section>
+                        <h3>Definição</h3>
+                        <p>Cross-site request forgery</p>
+                        <p class="fragment">"Falsificação de requisição entre sites"</p>
+                    </section>
+                    <section>
+                        <h3>O que é na prática?</h3>
+                        <ul>
+                            <li class="fragment">Imagine que você esteja logado em um site <code>site1.com</code> <em>(ou seja, com um cookie válido)</em></li>
+                            <li class="fragment">E também acessa o site <code>site2.com</code></li>
+                            <li class="fragment">E no site <code>site2.com</code>, há uma requisição <code>POST site1.com/sacar account=abc&amount=1000</code></li>
+                            <li class="fragment">Como você está autenticado no site1, ele irá reconhecer essa como sendo uma requisição válida</li>
+                            <li class="fragment">E você irá perder seu precioso dinheiro!</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Como se proteger?</h3>
+                        <ul>
+                            <li class="fragment">Quando o usuário autentica em seu sistema, gere um <em>token</em> para ele e guarde-o na sessão</li>
+                            <li class="fragment">Em cada página que origina uma ação de alteração de estado em seu sistema, coloque esse <em>token</em> junto da requisição (em campos do formulário ou cabeçalhos do AJAX)</li>
+                            <li class="fragment">Na página que recebe a ação, verifique se o <em>token</em> enviado é válido</li>
+                            <li class="fragment">Pronto! Você tem o básico de uma proteção de CSRF em seu sistema</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>E como se proteger mais ainda?</h3>
+                        <ul>
+                            <li class="fragment">Ao invés de injetar diretamente o <em>token</em> em campos do HTML, você pode passá-lo através de cabeçalhos HTTP</li>
+                            <li class="fragment">Crie uma sessão "falsa" na tela de login para garantir que um atacante não faça um usuário passar-se por ele</li>
+                            <li class="fragment">Atributo <code>Samesite</code> de Cookies</li>
+                            <li class="fragment">Verifique o cabeçalho <code>Referer</code> (ou <code>Origin</code>) da requisição HTTP para garantir que a origem é do seu mesmo site</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Premissas e recomendações</h3>
+                        <ul>
+                            <li class="fragment">O <em>token</em> não pode se repetir entre usuários diferentes, então é importante utilizar um CSPRNG <em>(Cryptographically Secure Pseudo-Random Number Generator)</em></li>
+                            <li class="fragment">Não pode ser muito pequeno <em>(para evitar brute force)</em></li>
+                            <li class="fragment">Não pode aparecer nos <em>logs</em> do servidor</li>
+                            <li class="fragment">Não pode estar na URL</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Premissas e recomendações <small>(continuação)</small></h3>
+                        <ul>
+                            <li class="fragment">Você <em>pode</em> gerar <em>tokens</em> a cada requisição ao invés de um por sessão, mas isso interfere na usabilidade do sistema (por exemplo, o botão <em>Voltar</em> do navegador irá causar uma falha de CSRF)</li>
+                            <li class="fragment">Se você quiser uma abordagem <em>stateless</em>, pode gerar um <em>token</em> criptografado com o <code>Session ID</code> do usuário e um <em>timestamp</em>, por exemplo</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Referências</h3>
+                        <ul>
+                            <li><a href="https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.md" target="_blank">OWASP CheatSheet de prevenção de CSRF</a></li>
+                            <li><a href="https://seclab.stanford.edu/websec/csrf/csrf.pdf" target="_blank">Paper "Robust Defenses for Cross-Site Request Forgery" de Stanford</a></li>
+                        </ul>
+                        <br><br>
+                        <h3>Bibliotecas</h3>
+                        <ul>
+                            <li><a href="https://github.com/symfony/security-csrf" target="_blank">symfony/security-csrf</a></li>
+                            <li><a href="https://github.com/paragonie/anti-csrf" target="_blank">paragonie/anti-csrf</a></li>
+                        </ul>
                     </section>
                 </section>
 
