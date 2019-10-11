@@ -58,7 +58,6 @@
                     <section>
                         <h3>Definição</h3>
                         <p>Cross-site request forgery</p>
-                        <p class="fragment">"Falsificação de requisição entre sites"</p>
                     </section>
                     <section>
                         <h3>O que é na prática?</h3>
@@ -124,6 +123,16 @@
                         <h2>CAPTCHA</h2>
                     </section>
                     <section>
+                        <h3>Definição</h3>
+                        <div class="div-center">
+                            <strong>C</strong>ompletely<br>
+                            <strong>A</strong>utomated<br>
+                            <strong>P</strong>ublic<br>
+                            <strong>T</strong>uring test to tell<br>
+                            <strong>C</strong>omputers and<br>
+                            <strong>H</strong>umans<br>
+                            <strong>A</strong>part
+                        </div>
                     </section>
                 </section>
 
@@ -132,6 +141,31 @@
                         <h2>Duplo fator de autenticação</h2>
                     </section>
                     <section>
+                        <h3>HOTP</h3>
+                        <ul>
+                            <li><a href="https://en.wikipedia.org/wiki/HMAC-based_One-time_Password_algorithm" target="_blank"><strong>H</strong>MAC-based <strong>O</strong>ne-<strong>T</strong>ime <strong>P</strong>assword</a> é um algoritmo
+                            baseado em <a href="https://en.wikipedia.org/wiki/Hash-based_message_authentication_code" target="_blank">HMAC</a> que gera uma senha a partir de uma chave</li>
+                            <li class="fragment">Para garantir a unicidade <em>(afinal, há One-Time no nome)</em>, é incrementado um contador a cada geração/checagem do valor</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>TOTP</h3>
+                        <ul>
+                            <li><a href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_algorithm" target="_blank"><strong>T</strong>ime-based <strong>O</strong>ne-<strong>T</strong>ime <strong>P</strong>assword</a> é uma extensão do
+                                HOTP, que utiliza o horário atual ao invés do contador para a unicidade</li>
+                            <li class="fragment">Geralmente, há uma janela de 30 segundos de validade da senha</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Referências, bibliotecas e soluções</h3>
+                        <ul>
+                            <li><a href="https://sakurity.com/blog/2015/07/18/2fa.html" target="_blank">Why You Don't Need 2 Factor Authentication</a></li>
+                            <li><a href="https://www.kaspersky.com/blog/2fa-practical-guide/24219/" target="_blank">SMS-based two-factor authentication is not safe</a></li>
+                            <li><a href="https://github.com/sonata-project/GoogleAuthenticator" target="_blank">sonata-project/google-authenticator</a></li>
+                            <li><a href="https://github.com/twilio/authy-php" target="_blank">twilio/authy-php</a></li>
+                            <li><a href="https://www.twilio.com/sms" target="_blank">Twilio SMS</a></li>
+                            <li><a href="https://www.nexmo.com/products/sms" target="_blank">Nexmo SMS</a></li>
+                        </ul>
                     </section>
                 </section>
 
@@ -187,6 +221,9 @@
                         <h2>Outras técnicas para dificultar ataques</h2>
                     </section>
                     <section>
+                        <ul>
+                            <li class="fragment">Coloque um cabeçalho aleatório na resposta, não importando se houver sucesso ou falha</li>
+                        </ul>
                     </section>
                 </section>
 
@@ -203,6 +240,10 @@
                         <h2>Funcionalidade "Esqueci a senha"</h2>
                     </section>
                     <section>
+                        <h3>Dicas</h3>
+                        <ul>
+                            <li class="fragment">Se o usuário fornecer um e-mail que não existe na base, <strong>não</strong> o avise!</li>
+                        </ul>
                     </section>
                 </section>
             </div>

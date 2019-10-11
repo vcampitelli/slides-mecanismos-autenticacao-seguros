@@ -41,30 +41,16 @@ pre[class*="language-"].line-numbers > code {
 pre[class*="language-"] {
   background: rgba(0, 0, 0, 0.3);
 }
+.div-center {
+  text-align: left;
+  display: inline-block;
+  margin: 0 auto;
+}
 /*
-.reveal {
-  font-family: Lato, "Open Sans", sans-serif;
-}
-.reveal h1 {
-  font-size: 3.3em;
-}
-.reveal section img {
-  border: 0;
-}
-.token.string {
-  color: #ead4a3;
-}
-section > ul:not(.no-padding)  > li + li,
-li.margintop {
-  margin-top: 1em;
-}
 .token.string {
   color: #ead4a3;
 }
 .token.variable {
   color: #66d9ef;
-}
-.small {
-  font-size: 0.6em;
 }
 */
