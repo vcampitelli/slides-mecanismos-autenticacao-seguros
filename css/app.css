@@ -1,5 +1,5 @@
 .reveal {
-  font-family: Lato, "Open Sans", sans-serif;
+  font-family: "Source Sans Pro", Lato, "Open Sans", sans-serif;
 }
 .reveal pre code {
   font-size: 0.6em;
@@ -37,10 +37,6 @@ pre {
 pre[class*="language-"].line-numbers > code {
   overflow: visible;
 }
-:not(pre) > code[class*="language-"],
-pre[class*="language-"] {
-  background: rgba(0, 0, 0, 0.3);
-}
 .div-center {
   text-align: left;
   display: inline-block;
@@ -55,11 +51,12 @@ pre[class*="language-"] {
 .color-transparent {
   color: transparent;
 }
-/*
 .token.string {
   color: #ead4a3;
 }
 .token.variable {
   color: #66d9ef;
 }
-*/
+.token.operator {
+  color: #fff;
+}

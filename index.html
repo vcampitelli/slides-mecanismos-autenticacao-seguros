@@ -10,7 +10,7 @@
 
         <link rel="stylesheet" href="reveal.js/css/reveal.css">
         <link rel="stylesheet" href="reveal.js/css/theme/solarized.css">
-        <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/prism.css">
         <link rel="stylesheet" href="css/app.css">
 
@@ -33,6 +33,7 @@
                     <h2>Quem sou eu?</h2>
                     <ul>
                         <li>Vinícius Campitelli</li>
+                        <li>Membro do <a href="http://phpsp.org.br" target="_blank">PHPSP</a></li>
                         <li>Sócio-fundador do <a href="https://curseduca.pro" target="_blank">Curseduca</a></li>
                         <li>GitHub/Twitter: <a href="https://twitter.com/vcampitelli" target="_blank">@vcampitelli</a></li>
                         <li>Slides: <a href="https://viniciuscampitelli.com/slides-mecanismos-autenticacao-seguros/" target="_blank">viniciuscampitelli.com</a></li>
@@ -48,46 +49,38 @@
                         <li>Prevenção à enumeração de usuários;</li>
                         <li>Funcionalidade "Permanecer logado";</li>
                         <li>Funcionalidade "Esqueci a senha".</li>
-                        <li>Autenticação em APIs;</li>
+                        <li>Login via terceiros;</li>
+                        <li>Autenticação em APIs.</li>
                     </ul>
                 </section>
 
                 <section>
                     <section>
                         <h2>Protegendo CSRF de forma correta</h2>
-                    </section>
-                    <section>
-                        <h3>Definição</h3>
-                        <p>Cross-site request forgery</p>
+                        <em class="fragment"><small>(Cross-site request forgery)</small></em>
                     </section>
                     <section>
                         <h3>O que é na prática?</h3>
                         <ul>
-                            <li class="fragment">Imagine que você esteja logado em um site <code>site1.com</code> <em>(ou seja, com um cookie válido)</em></li>
-                            <li class="fragment">E também acessa o site <code>site2.com</code></li>
-                            <li class="fragment">E no site <code>site2.com</code>, há uma requisição <code>POST site1.com/sacar account=abc&amount=1000</code></li>
-                            <li class="fragment">Como você está autenticado no site1, ele irá reconhecer essa como sendo uma requisição válida</li>
+                            <li class="fragment">Imagine que você esteja logado em um site <code>site1.com</code></li>
+                            <li class="fragment">Então acessa o site <code>site2.com</code></li>
+                            <li class="fragment">E no site <code>site2.com</code>, há uma requisição <code>POST site1.com/transferir?conta=1234&valor=1000</code></li>
+                            <li class="fragment">Como você está autenticado no site1, essa requisição será válida</li>
                             <li class="fragment">E você irá perder seu precioso dinheiro!</li>
                         </ul>
                     </section>
                     <section>
-                        Preciso disso na tela de login? Sim, para garantir que um atacante não faça um usuário passar-se por ele
+                        <blockquote>Mas por que eu preciso disso na tela de login?</blockquote>
+                        <p class="fragment">Para garantir que um atacante não faça um usuário passar-se por ele</p>
                     </section>
                     <section>
                         <h3>Como se proteger?</h3>
                         <ul>
                             <li class="fragment">Crie uma sessão "falsa"</li>
                             <li class="fragment">Gere um <em>token</em> para ele e guarde-o nessa sessão</li>
-                            <li class="fragment">Coloque esse <em>token</em> junto da requisição (em campos do formulário ou cabeçalhos do AJAX)</li>
-                            <li class="fragment">Na página que recebe a ação de login, verifique se o <em>token</em> enviado é válido</li>
-                            <li class="fragment">Pronto! Você tem o básico de uma proteção de CSRF em seu sistema</li>
-                        </ul>
-                    </section>
-                    <section>
-                        <h3>E como se proteger mais ainda?</h3>
-                        <ul>
-                            <li class="fragment"><a href="https://ayesh.me/PHP-Samesite-cookies" target="_blank">Atributo <code>Samesite</code></a> de Cookies</li>
-                            <li class="fragment">Verifique o cabeçalho <code>Referer</code> (ou <code>Origin</code>) da requisição HTTP para garantir que a origem é do seu mesmo site</li>
+                            <li class="fragment">Coloque esse <em>token</em> junto da requisição <em>(em campos do formulário ou cabeçalhos do AJAX)</em></li>
+                            <li class="fragment">Na página que recebe a ação de login, verifique se o <em>token</em> enviado é o mesmo da sessão</li>
+                            <li class="fragment">Se quiser, verifique também o cabeçalho <code>Referer</code> (ou <code>Origin</code>) da requisição para garantir que a origem é do seu site</li>
                         </ul>
                     </section>
                     <section>
@@ -102,7 +95,7 @@
                     <section>
                         <h3>Premissas e recomendações <small>(continuação)</small></h3>
                         <ul>
-                            <li class="fragment">Você <em>pode</em> gerar <em>tokens</em> a cada requisição ao invés de um por sessão, mas isso interfere na usabilidade do sistema (por exemplo, o botão <em>Voltar</em> do navegador irá causar uma falha de CSRF)</li>
+                            <li class="fragment">Você <em>pode</em> gerar <em>tokens</em> a cada requisição ao invés de um por sessão, mas isso interfere na usabilidade do sistema <em>(por exemplo, o botão "Voltar" do navegador irá causar uma falha de CSRF)</em></li>
                             <li class="fragment">Se você quiser uma abordagem <em>stateless</em>, pode gerar um <em>token</em> criptografado com o <code>Session ID</code> do usuário e um <em>timestamp</em>, por exemplo</li>
                         </ul>
                     </section>
@@ -126,8 +119,10 @@
                         <h2>CAPTCHA</h2>
                     </section>
                     <section>
-                        <img src="img/rapidshare-captcha-cats.jpg" alt="CAPTCHA do RapidShare"><br>
-                        <img src="img/captcha-lol.jpg" alt="CAPTCHA fórmula matemática" class="fragment">
+                        <img src="img/rapidshare-captcha-cats.jpg" alt="CAPTCHA do RapidShare">
+                    </section>
+                    <section>
+                        <img src="img/captcha-bug.jpg" alt="CAPTCHA bugs" style="width: 45%;">
                     </section>
                     <section>
                         <h3>Definição</h3>
@@ -155,9 +150,6 @@
                         <h2>Duplo fator de autenticação</h2>
                     </section>
                     <section>
-                        <img src="img/2fa-googleauth.png" alt="Google Authenticator">
-                    </section>
-                    <section>
                         <h3>HOTP</h3>
                         <ul>
                             <li><a href="https://en.wikipedia.org/wiki/HMAC-based_One-time_Password_algorithm" target="_blank"><strong>H</strong>MAC-based <strong>O</strong>ne-<strong>T</strong>ime <strong>P</strong>assword</a> é um algoritmo
@@ -172,6 +164,9 @@
                                 HOTP, que utiliza o horário atual ao invés do contador para a unicidade</li>
                             <li class="fragment">Geralmente, há uma janela de 30 segundos de validade da senha</li>
                         </ul>
+                    </section>
+                    <section>
+                        <img src="img/2fa-googleauth.png" alt="Google Authenticator">
                     </section>
                     <section>
                         <pre><code class="language-php line-numbers">public function __construct() {
@@ -193,6 +188,18 @@ public fuction generateSecret(string $secret) : string {
         $secret
     );
 }</code></pre>
+                    </section>
+                    <section>
+                        <h3>Bloqueie o usuário após algumas tentativas inválidas do token do 2FA!</h3>
+                    </section>
+                    <section>
+                        <ul>
+                            <li>Tokens de 6 dígitos possuem 1.000.000 de combinações <em>(000000 - 999999)</em></li>
+                            <li class="fragment">Se um atacante fizer 1 requisição por segundo ao seu sistema, ele irá demorar 1 milhão de segundos para testar todas as combinações possíveis</li>
+                            <li class="fragment"><code>1000000 / 86400 = 11.574074074</code></li>
+                            <li class="fragment">Ou seja, o token será quebrado em menos de 12 dias</li>
+                            <li class="fragment">Mas que atacante só faz 1 requisição por segundo?</li>
+                        </ul>
                     </section>
                     <section>
                         <h3>Referências, bibliotecas e soluções</h3>
@@ -277,12 +284,41 @@ public fuction generateSecret(string $secret) : string {
                     </section>
                     <section>
                         <h3>Solução mais segura</h3>
-                        <ul>
-                            <li class="fragment">Prefixe o <em>token</em> com um <strong>identificador</strong> <span class="fragment">(NÃO use diretamente o ID do usuário)</span></li>
-                            <li class="fragment">Crie uma tabela no banco de dados com o identificador acima e somente o <em>hash</em> do <em>token (SHA-256 ou melhor)</em></li>
-                            <li class="fragment">Ao consultar a tabela, utilize apenas o identificador na query</li>
-                            <li class="fragment">Faça o <em>hash</em> do <em>token</em> informado no <em>cookie</em> do usuário e compare-o com o que está no banco (com <code>hash_equals()</code>)</li>
-                        </ul>
+                    </section>
+                    <section>
+                        <p>1. Prefixe o <em>token</em> com um <strong>identificador</strong> <em>(NÃO use diretamente o ID do usuário)</em></p>
+                        <pre><code class="language-php">$identifier = hash('sha256', $userId); // 64 bytes
+$token = bin2hex(random_bytes(32)); // 64 bytes
+$cookie = $identifier . $token;</code></pre>
+                    </section>
+                    <section>
+                        <p>2. Crie uma tabela no banco de dados com o identificador acima e somente o <em>hash</em> do <em>token</em> ao invés dele</p>
+                        <pre><code class="language-sql">CREATE TABLE `rememberme_tokens` (
+  `id` int unsigned AUTO_INCREMENT,
+  `identifier` char(64) NOT NULL,
+  `token_hash` char(128) NOT NULL,
+  PRIMARY KEY (`id`)
+)</code></pre>
+                        <pre><code class="language-php">$hashedToken = hash('sha512', $token);
+$pdo->prepare('INSERT INTO rememberme_tokens (NULL, ?, ?)')
+    ->execute([$identifier, $hashedToken]);</code></pre>
+                    </section>
+                    <section>
+                        <p>3. Ao consultar o banco, utilize apenas o identificador</p>
+                        <pre><code class="language-php">$query = $pdo->prepare(
+    'SELECT `token_hash` FROM `rememberme_tokens`
+        WHERE `identifier` = ? LIMIT 1'
+);
+$hashFromDatabase = $query->fetch(PDO::FETCH_COLUMN);</code></pre>
+                    </section>
+                    <section>
+                        <p>4. Faça o <em>hash</em> do <em>token</em> informado no <em>cookie</em> do usuário e compare-o com o que está no banco (com <code>hash_equals()</code>)</p>
+                        <pre><code class="language-php">$hashedToken = hash('sha512', substr($cookie, 64));
+if (hash_equals($hashedToken, $hashFromDatabase)) {
+    redirectToHome();
+} else {
+    redirectToLogin();
+}</code></pre>
                     </section>
                     <section>
                         <h3>Referência e biblioteca</h3>
@@ -357,12 +393,18 @@ public fuction generateSecret(string $secret) : string {
                         <h2>Autenticação em APIs</h2>
                     </section>
                     <section>
+                        <h3>Dicas</h3>
                         <ul>
                             <li class="fragment">Use HTTPS sempre (&hearts; <a href="https://letsencrypt.org" target="_blank">Let's Encrypt</a>)</li>
                             <li class="fragment">Não crie seu próprio sistema de autenticação, utilize um protocolo já conhecido (<a href="https://openid.net/connect/" target="_blank">OpenID</a>, <a href="https://oauth2.thephpleague.com" target="_blank">OAuth 2.0</a>, entre outros)</li>
+                            <li class="fragment">Para geração dos identificadores do usuário <em>(por exemplo, client secret no OAuth 2)</em> utilize <a href="https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator" target="_blank">CSPRNG</a></li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Dicas <small>(continuação)</small></h3>
+                        <ul>
                             <li class="fragment">Para <em>tokens</em>, utilize <a href="https://jwt.io" target="_blank">JWT</a> ou <a href="https://github.com/paragonie/paseto" target="_blank">Paseto</a></li>
                             <li class="fragment">Se for usar JWT, garanta que seu sistema não permita um <code>algorithm=none</code></li>
-                            <li class="fragment">Para geração dos identificadores do usuário <em>(por exemplo, client secret no OAuth 2)</em> utilize <a href="https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator" target="_blank">CSPRNG</a></li>
                             <li class="fragment">Mesmo se usar um <a href="https://www.nginx.com/learn/api-gateway/" target="_blank">API Gateway</a>, não deixe seus microserviços sem autenticação. Repasse o token para todos!</li>
                         </ul>
                     </section>
@@ -372,6 +414,7 @@ public fuction generateSecret(string $secret) : string {
                             <li><a href="https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/" target="_blank">Critical vulnerabilities in JSON Web Token libraries</a></li>
                             <li><a href="https://auth0.com/learn/token-based-authentication-made-easy/" target="_blank">Token Based Authentication Made Easy</a></li>
                         </ul>
+                        <br><br>
                         <h3>Bibliotecas</h3>
                         <ul>
                             <li><a href="https://github.com/lcobucci/jwt" target="_blank">lcobucci/jwt</a></li>
@@ -379,8 +422,9 @@ public fuction generateSecret(string $secret) : string {
                         </ul>
                     </section>
                 </section>
+
                 <section>
-                    <h1>Recapitulando...</h1>
+                    <h2>Recapitulando...</h2>
                     <ul>
                         <li class="fragment">
                             Login seguro não é trivial<br>
@@ -390,12 +434,11 @@ public fuction generateSecret(string $secret) : string {
                         <li class="fragment">Mas é <strong>possível</strong>!</li>
                     </ul>
                 </section>
+
                 <section>
-                    <h1>Slides</h1>
+                    <h2>Slides</h2>
                     <img src="img/qrcode.png" alt="QR Code"><br>
                     <a href="https://viniciuscampitelli.com/slides-mecanismos-autenticacao-seguros/" target="_blank">viniciuscampitelli.com</a>
-                </section>
-                <section>
                 </section>
             </div>
         </div>
