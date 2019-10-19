@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="author" content="Vinícius Campitelli">
-        <meta name="description" content="Uma das partes mais básicas de um sistema é seu processo de login. E por ser algo que não agrega valor direto ao negócio, acabamos não gastando o tempo necessário para criar um fluxo realmente seguro, fazendo com que ele se torne o principal vetor de ataques de nossa aplicação. Iremos aprender como criar mecanismos seguros de autenticação, utilizando CSRF de forma correta, CAPTCHA, duplo fator de autenticação, prevenção à enumeração de usuários e outras técnias para dificultar ataques. Veremos também diversas dicas de como implementar as arriscadas (mas muitas vezes necessárias) funções 'Permanecer logado' e 'Esqueci a senha'.">
+        <meta name="description" content="Uma das partes mais básicas de um sistema é seu processo de login. E por ser algo que não agrega valor direto ao negócio, acabamos não gastando o tempo necessário para criar um fluxo realmente seguro, fazendo com que ele se torne o principal vetor de ataques de nossa aplicação. Iremos aprender como criar mecanismos seguros de autenticação, utilizando CSRF de forma correta, CAPTCHA, duplo fator de autenticação, prevenção à enumeração de usuários e autenticação em APIs. Veremos também diversas dicas de como implementar as arriscadas (mas muitas vezes necessárias) funções 'Permanecer logado' e 'Esqueci a senha'.">
 
         <title>Criando mecanismos de autenticação seguros</title>
 
@@ -45,9 +45,9 @@
                         <li>CAPTCHA;</li>
                         <li>Duplo fator de autenticação;</li>
                         <li>Prevenção à enumeração de usuários;</li>
-                        <li>Outras técnicas para dificultar ataques;</li>
                         <li>Funcionalidade "Permanecer logado";</li>
                         <li>Funcionalidade "Esqueci a senha".</li>
+                        <li>Autenticação em APIs;</li>
                     </ul>
                 </section>
 
@@ -85,8 +85,7 @@
                     <section>
                         <h3>E como se proteger mais ainda?</h3>
                         <ul>
-                            <li class="fragment">Ao invés de injetar diretamente o <em>token</em> em campos do HTML, você pode passá-lo através de cabeçalhos HTTP</li>
-                            <li class="fragment">Atributo <code>Samesite</code> de Cookies</li>
+                            <li class="fragment"><a href="https://ayesh.me/PHP-Samesite-cookies" target="_blank">Atributo <code>Samesite</code></a> de Cookies</li>
                             <li class="fragment">Verifique o cabeçalho <code>Referer</code> (ou <code>Origin</code>) da requisição HTTP para garantir que a origem é do seu mesmo site</li>
                         </ul>
                     </section>
@@ -137,6 +136,13 @@
                             <strong>A</strong>part
                         </div>
                     </section>
+                    <section>
+                        <h3>Referências</h3>
+                        <ul>
+                            <li><a href="https://www.google.com/recaptcha/intro/v3.html" target="_blank">reCAPTCHA v3</a></li>
+                            <li><a href="https://www.phpcaptcha.org" target="_blank">Securimage PHP CAPTCHA</a></li>
+                        </ul>
+                    </section>
                 </section>
 
                 <section>
@@ -158,6 +164,27 @@
                                 HOTP, que utiliza o horário atual ao invés do contador para a unicidade</li>
                             <li class="fragment">Geralmente, há uma janela de 30 segundos de validade da senha</li>
                         </ul>
+                    </section>
+                    <section>
+                        <pre><code class="language-php line-numbers">public function __construct() {
+    $this->authenticator = new \Sonata\GoogleAuthenticator\GoogleAuthenticator();
+    $this->secret = getAuthenticatorSecretFromSomewhere();
+}
+
+public function check(string $code) : bool {
+    return $this->authenticator->checkCode($this->secret, $code);
+}
+
+public fuction generateSecret() : string {
+    return $this->authenticator->generateSecret()
+}
+
+public fuction generateSecret(string $secret) : string {
+    return \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
+        'My App',
+        $secret
+    );
+}</code></pre>
                     </section>
                     <section>
                         <h3>Referências, bibliotecas e soluções</h3>
@@ -221,17 +248,6 @@
 
                 <section>
                     <section>
-                        <h2>Outras técnicas para dificultar ataques</h2>
-                    </section>
-                    <section>
-                        <ul>
-                            <li class="fragment">Coloque um cabeçalho aleatório na resposta, não importando se houver sucesso ou falha</li>
-                        </ul>
-                    </section>
-                </section>
-
-                <section>
-                    <section>
                         <h2>Funcionalidade "Permanecer logado"</h2>
                     </section>
                     <section>
@@ -252,7 +268,7 @@
                         </ul>
                     </section>
                     <section>
-                        <h3>Solução mais segura</h3>
+                        <h3 id="remember-me-good-solution">Solução mais segura</h3>
                         <ul>
                             <li class="fragment">Prefixe o <em>token</em> com um <strong>identificador</strong> <strong class="fragment">(NÃO use diretamente o ID do usuário)</strong></li>
                             <li class="fragment">Crie uma tabela no banco de dados com o identificador acima e apenas o <em>hash</em> do <em>token (SHA-256 ou melhor)</em></li>
@@ -278,9 +294,62 @@
                         <h2>Funcionalidade "Esqueci a senha"</h2>
                     </section>
                     <section>
-                        <h3>Dicas</h3>
+                        <h3>Precauções</h3>
                         <ul>
-                            <li class="fragment">Se o usuário fornecer um e-mail que não existe na base, <strong>não</strong> o avise!</li>
+                            <li class="fragment">Perguntas secretas estão cada vez menos secretas por causa das redes sociais</li>
+                            <li class="fragment">Emails não são sempre encriptados</li>
+                            <li class="fragment">Emails podem não chegar</li>
+                            <li class="fragment"><a href="https://medium.com/@vasanthavanan59439/ss7-the-deadliest-attack-6423de7fe8c0" target="_blank">SMS não são confiáveis</a></li>
+                    </section>
+                    <section>
+                        <h3><span class="fragment">Tentativa de</span> Solução</h3>
+                        <ul>
+                            <li class="fragment">Realmente avalie se seu sistema precisa dessa funcionalidade automática</li>
+                            <li class="fragment"><strong>NÃO</strong> crie uma nova senha e envie por email</li>
+                            <li class="fragment"><strong>NÃO</strong> mande a senha em texto plano por email <em>(?????)</em></li>
+                            <li class="fragment">Utilize a <a href="#remember-me-good-solution">mesma solução</a> do <em>token</em> descrita no slide de "Permanecer logado"</li>
+                            <li class="fragment">Coloque um tempo limite para expiração do <em>token></em></li>
+                            <li class="fragment">Envie o código para o usuário (se for por email, criptografe!)</li>
+                            <li class="fragment">Se o usuário fornecer um usuário que não existe na base, <strong>não</strong> o avise!</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Referências</h3>
+                        <ul>
+                            <li><a href="https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-persistence#title.2.1" target="_blank">Account Recovery (Paragon IE)</a></li>
+                            <li><a href="https://paragonie.com/blog/2016/09/untangling-forget-me-knot-secure-account-recovery-made-simple" target="_blank">Untangling the Forget-Me Knot: Secure Account Recovery Made Simple</a></li>
+                        </ul>
+                        <h3>Biblioteca</h3>
+                        <ul>
+                            <li><a href="https://github.com/paragonie/gpg-mailer" target="_blank">paragonie/gpg-mailer</a></li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Autenticação em APIs</h2>
+                    </section>
+                    <section>
+                        <ul>
+                            <li class="fragment">Use HTTPS sempre (&hearts; <a href="https://letsencrypt.org" target="_blank">Let's Encrypt</a>)</li>
+                            <li class="fragment">Não crie seu próprio sistema de autenticação, utilize um protocolo já conhecido (<a href="https://openid.net/connect/" target="_blank">OpenID</a>, <a href="https://oauth2.thephpleague.com" target="_blank">OAuth 2.0</a>, entre outros)</li>
+                            <li class="fragment">Para <em>tokens</em>, utilize <a href="https://jwt.io" target="_blank">JWT</a> ou <a href="https://github.com/paragonie/paseto" target="_blank">Paseto</a></li>
+                            <li class="fragment">Se for usar JWT, garanta que seu sistema não permita um <code>algorithm=none</code></li>
+                            <li class="fragment">Para geração dos identificadores do usuário <em>(por exemplo, client secret no OAuth 2)</em> utilize <a href="https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator" target="_blank">CSPRNG</a></li>
+                            <li class="fragment">Mesmo se usar um <a href="https://www.nginx.com/learn/api-gateway/" target="_blank">API Gateway</a>, não deixe seus microserviços sem autenticação. Repasse o token para todos!</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Referências</h3>
+                        <ul>
+                            <li><a href="https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/" target="_blank">Critical vulnerabilities in JSON Web Token libraries</a></li>
+                            <li><a href="https://auth0.com/learn/token-based-authentication-made-easy/" target="_blank">Token Based Authentication Made Easy</a></li>
+                        </ul>
+                        <h3>Bibliotecas</h3>
+                        <ul>
+                            <li><a href="https://github.com/lcobucci/jwt" target="_blank">lcobucci/jwt</a></li>
+                            <li><a href="https://github.com/thephpleague/oauth2-server" target="_blank">thephpleague/oauth2-server</a></li>
                         </ul>
                     </section>
                 </section>
