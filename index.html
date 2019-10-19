@@ -73,18 +73,24 @@
                         <blockquote>Mas por que eu preciso disso na tela de login?</blockquote>
                         <p class="fragment">Para garantir que um atacante não faça um usuário passar-se por ele</p>
                     </section>
-                    <section>
-                        <h3>Como se proteger?</h3>
+                    <section data-transition="none-out">
+                        <h3>Como se proteger? <small class="color-transparent">(continuação)</small></h3>
                         <ul>
                             <li class="fragment">Crie uma sessão "falsa"</li>
                             <li class="fragment">Gere um <em>token</em> para ele e guarde-o nessa sessão</li>
                             <li class="fragment">Coloque esse <em>token</em> junto da requisição <em>(em campos do formulário ou cabeçalhos do AJAX)</em></li>
-                            <li class="fragment">Na página que recebe a ação de login, verifique se o <em>token</em> enviado é o mesmo da sessão</li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section data-transition="none-in">
+                        <h3>Como se proteger? <small>(continuação)</small></h3>
+                        <ul>
+                            <li>Na página que recebe a ação de login, verifique se o <em>token</em> enviado é o mesmo da sessão</li>
                             <li class="fragment">Se quiser, verifique também o cabeçalho <code>Referer</code> (ou <code>Origin</code>) da requisição para garantir que a origem é do seu site</li>
                         </ul>
                     </section>
-                    <section>
-                        <h3>Premissas e recomendações</h3>
+                    <section data-transition="none-out">
+                        <h3>Premissas e recomendações <small class="color-transparent">(continuação)</small></h3>
                         <ul>
                             <li class="fragment">O <em>token</em> não pode se repetir entre usuários diferentes, então é importante utilizar um <a href="https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator" target="_blank">CSPRNG</a> <em>(Cryptographically Secure Pseudo-Random Number Generator)</em></li>
                             <li class="fragment">Não pode ser muito pequeno <em>(para evitar brute force)</em></li>
@@ -92,12 +98,13 @@
                             <li class="fragment">Não pode estar na URL</li>
                         </ul>
                     </section>
-                    <section>
+                    <section data-transition="none-in">
                         <h3>Premissas e recomendações <small>(continuação)</small></h3>
                         <ul>
-                            <li class="fragment">Você <em>pode</em> gerar <em>tokens</em> a cada requisição ao invés de um por sessão, mas isso interfere na usabilidade do sistema <em>(por exemplo, o botão "Voltar" do navegador irá causar uma falha de CSRF)</em></li>
+                            <li>Você <em>pode</em> gerar <em>tokens</em> a cada requisição ao invés de um por sessão, mas isso interfere na usabilidade do sistema <em>(por exemplo, o botão "Voltar" do navegador irá causar uma falha de CSRF)</em></li>
                             <li class="fragment">Se você quiser uma abordagem <em>stateless</em>, pode gerar um <em>token</em> criptografado com o <code>Session ID</code> do usuário e um <em>timestamp</em>, por exemplo</li>
                         </ul>
+                        <br><br>
                     </section>
                     <section>
                         <h3>Referências</h3>
@@ -193,6 +200,7 @@ public fuction generateSecret(string $secret) : string {
                         <h3>Bloqueie o usuário após algumas tentativas inválidas do token do 2FA!</h3>
                     </section>
                     <section>
+                        <h4>Por que bloquear?</h4>
                         <ul>
                             <li>Tokens de 6 dígitos possuem 1.000.000 de combinações <em>(000000 - 999999)</em></li>
                             <li class="fragment">Se um atacante fizer 1 requisição por segundo ao seu sistema, ele irá demorar 1 milhão de segundos para testar todas as combinações possíveis</li>
@@ -216,9 +224,6 @@ public fuction generateSecret(string $secret) : string {
 
                 <section>
                     <section>
-                        <h2>Prevenção à enumeração de usuários</h2>
-                    </section>
-                    <section>
                         O que um sistema que rode o código a seguir pode dar de informação a um atacante?
                     </section>
                     <section>
@@ -234,6 +239,9 @@ public fuction generateSecret(string $secret) : string {
                     <section>
                         <p>É possível saber que usuários existem em sua aplicação através de <em>timing attack</em></p>
                         <p class="fragment">Modifique o código para que a custosa função <code>verifyPassword</code> seja sempre invocada!</p>
+                    </section>
+                    <section>
+                        <h2>Prevenção à enumeração de usuários</h2>
                     </section>
                     <section>
                         <pre><code class="language-php line-numbers">public function login(string $username, string $password) : bool
@@ -392,18 +400,18 @@ if (hash_equals($hashedToken, $hashFromDatabase)) {
                     <section>
                         <h2>Autenticação em APIs</h2>
                     </section>
-                    <section>
-                        <h3>Dicas</h3>
+                    <section data-transition="none-out">
+                        <h3>Dicas <small class="color-transparent">(continuação)</small></h3>
                         <ul>
                             <li class="fragment">Use HTTPS sempre (&hearts; <a href="https://letsencrypt.org" target="_blank">Let's Encrypt</a>)</li>
                             <li class="fragment">Não crie seu próprio sistema de autenticação, utilize um protocolo já conhecido (<a href="https://openid.net/connect/" target="_blank">OpenID</a>, <a href="https://oauth2.thephpleague.com" target="_blank">OAuth 2.0</a>, entre outros)</li>
                             <li class="fragment">Para geração dos identificadores do usuário <em>(por exemplo, client secret no OAuth 2)</em> utilize <a href="https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator" target="_blank">CSPRNG</a></li>
                         </ul>
                     </section>
-                    <section>
+                    <section data-transition="none-in">
                         <h3>Dicas <small>(continuação)</small></h3>
                         <ul>
-                            <li class="fragment">Para <em>tokens</em>, utilize <a href="https://jwt.io" target="_blank">JWT</a> ou <a href="https://github.com/paragonie/paseto" target="_blank">Paseto</a></li>
+                            <li>Para <em>tokens</em>, utilize <a href="https://jwt.io" target="_blank">JWT</a> ou <a href="https://github.com/paragonie/paseto" target="_blank">Paseto</a></li>
                             <li class="fragment">Se for usar JWT, garanta que seu sistema não permita um <code>algorithm=none</code></li>
                             <li class="fragment">Mesmo se usar um <a href="https://www.nginx.com/learn/api-gateway/" target="_blank">API Gateway</a>, não deixe seus microserviços sem autenticação. Repasse o token para todos!</li>
                         </ul>
