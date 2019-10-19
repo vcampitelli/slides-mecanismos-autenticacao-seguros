@@ -70,11 +70,15 @@
                         </ul>
                     </section>
                     <section>
+                        Preciso disso na tela de login? Sim, para garantir que um atacante não faça um usuário passar-se por ele
+                    </section>
+                    <section>
                         <h3>Como se proteger?</h3>
                         <ul>
-                            <li class="fragment">Quando o usuário autentica em seu sistema, gere um <em>token</em> para ele e guarde-o na sessão</li>
-                            <li class="fragment">Em cada página que origina uma ação de alteração de estado em seu sistema, coloque esse <em>token</em> junto da requisição (em campos do formulário ou cabeçalhos do AJAX)</li>
-                            <li class="fragment">Na página que recebe a ação, verifique se o <em>token</em> enviado é válido</li>
+                            <li class="fragment">Crie uma sessão "falsa"</li>
+                            <li class="fragment">Gere um <em>token</em> para ele e guarde-o nessa sessão</li>
+                            <li class="fragment">Coloque esse <em>token</em> junto da requisição (em campos do formulário ou cabeçalhos do AJAX)</li>
+                            <li class="fragment">Na página que recebe a ação de login, verifique se o <em>token</em> enviado é válido</li>
                             <li class="fragment">Pronto! Você tem o básico de uma proteção de CSRF em seu sistema</li>
                         </ul>
                     </section>
@@ -82,7 +86,6 @@
                         <h3>E como se proteger mais ainda?</h3>
                         <ul>
                             <li class="fragment">Ao invés de injetar diretamente o <em>token</em> em campos do HTML, você pode passá-lo através de cabeçalhos HTTP</li>
-                            <li class="fragment">Crie uma sessão "falsa" na tela de login para garantir que um atacante não faça um usuário passar-se por ele</li>
                             <li class="fragment">Atributo <code>Samesite</code> de Cookies</li>
                             <li class="fragment">Verifique o cabeçalho <code>Referer</code> (ou <code>Origin</code>) da requisição HTTP para garantir que a origem é do seu mesmo site</li>
                         </ul>
@@ -90,7 +93,7 @@
                     <section>
                         <h3>Premissas e recomendações</h3>
                         <ul>
-                            <li class="fragment">O <em>token</em> não pode se repetir entre usuários diferentes, então é importante utilizar um CSPRNG <em>(Cryptographically Secure Pseudo-Random Number Generator)</em></li>
+                            <li class="fragment">O <em>token</em> não pode se repetir entre usuários diferentes, então é importante utilizar um <a href="https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator" target="_blank">CSPRNG</a> <em>(Cryptographically Secure Pseudo-Random Number Generator)</em></li>
                             <li class="fragment">Não pode ser muito pequeno <em>(para evitar brute force)</em></li>
                             <li class="fragment">Não pode aparecer nos <em>logs</em> do servidor</li>
                             <li class="fragment">Não pode estar na URL</li>
@@ -232,6 +235,41 @@
                         <h2>Funcionalidade "Permanecer logado"</h2>
                     </section>
                     <section>
+                        <h3>Solução mais simples</h3>
+                        <ul>
+                            <li class="fragment">Gerar um <em>token</em> único</li>
+                            <li class="fragment">Guardá-lo no <em>cookie</em> do browser do usuário</li>
+                            <li class="fragment">Salvar esse <em>token</em> em um banco de dados relacionando ao usuário</li>
+                            <li class="fragment">Sempre que é feito o acesso à tela de login, comparar os tokens</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h4>Cuidados</h4>
+                        <ul>
+                            <li class="fragment">Garanta que o <em>token</em> será único para o usuário e não previsível (novamente, use <a href="https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator" target="_blank">CSPRNG</a>)</li>
+                            <li class="fragment">Faça comparações que tenham tempo fixo para prevenir <em>timing attacks</em> (por exemplo, <code>hash_equals()</code>)</li>
+                            <li class="fragment">Precisa ser eficiente, para não permitir <a href="https://en.wikipedia.org/wiki/Denial-of-service_attack" target="_blank">DoS</a></li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Solução mais segura</h3>
+                        <ul>
+                            <li class="fragment">Prefixe o <em>token</em> com um <strong>identificador</strong> <strong class="fragment">(NÃO use diretamente o ID do usuário)</strong></li>
+                            <li class="fragment">Crie uma tabela no banco de dados com o identificador acima e apenas o <em>hash</em> do <em>token (SHA-256 ou melhor)</em></li>
+                            <li class="fragment">Ao consultar a tabela, utilize apenas o identificador na Query</li>
+                            <li class="fragment">Faça o <em>hash</em> do <em>token</em> informado no <em>cookie</em> do usuário e compare-o com o que está no banco (novamente, com <code>hash_equals()</code>)</li>
+                            <li class="fragment">Não esqueça de invalidar os <em>tokens</em> do usuário se ele trocar a senha</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Referência</h3>
+                        <ul>
+                            <li><a href="https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-persistence#title.2.1" target="_blank">"Remember Me" - Long-Term Persistent Authentication (Paragon IE)</a></li>
+                        </ul>
+                        <h3>Biblioteca</h3>
+                        <ul>
+                            <li><a href="https://github.com/psecio/gatekeeper" target="_blank">psecio/gatekeeper</a></li>
+                        </ul>
                     </section>
                 </section>
 
