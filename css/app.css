@@ -46,6 +46,15 @@ pre[class*="language-"] {
   display: inline-block;
   margin: 0 auto;
 }
+.reveal section img {
+  border: 0;
+  box-shadow: none;
+  max-width: 100%;
+  max-height: 100%;
+}
+.color-transparent {
+  color: transparent;
+}
 /*
 .token.string {
   color: #ead4a3;

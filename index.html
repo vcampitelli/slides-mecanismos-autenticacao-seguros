@@ -9,7 +9,7 @@
         <title>Criando mecanismos de autenticação seguros</title>
 
         <link rel="stylesheet" href="reveal.js/css/reveal.css">
-        <link rel="stylesheet" href="reveal.js/css/theme/moon.css">
+        <link rel="stylesheet" href="reveal.js/css/theme/solarized.css">
         <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/prism.css">
         <link rel="stylesheet" href="css/app.css">
@@ -32,9 +32,10 @@
                 <section>
                     <h2>Quem sou eu?</h2>
                     <ul>
-                        <li>Vinícius Campitelli &mdash; <a href="http://vcampitelli.github.io">vcampitelli.github.io</a></li>
-                        <li>Arquiteto na <a href="https://mt4.com.br" target="_blank">MT4 Tecnologia</a></li>
-                        <li>Sócio-fundador no <a href="https://curseduca.pro" target="_blank">Curseduca</a></li>
+                        <li>Vinícius Campitelli</li>
+                        <li>Sócio-fundador do <a href="https://curseduca.pro" target="_blank">Curseduca</a></li>
+                        <li>GitHub/Twitter: <a href="https://twitter.com/vcampitelli" target="_blank">@vcampitelli</a></li>
+                        <li>Slides: <a href="https://viniciuscampitelli.com/slides-mecanismos-autenticacao-seguros/" target="_blank">viniciuscampitelli.com</a></li>
                     </ul>
                 </section>
 
@@ -125,6 +126,10 @@
                         <h2>CAPTCHA</h2>
                     </section>
                     <section>
+                        <img src="img/rapidshare-captcha-cats.jpg" alt="CAPTCHA do RapidShare"><br>
+                        <img src="img/captcha-lol.jpg" alt="CAPTCHA fórmula matemática" class="fragment">
+                    </section>
+                    <section>
                         <h3>Definição</h3>
                         <div class="div-center">
                             <strong>C</strong>ompletely<br>
@@ -148,6 +153,9 @@
                 <section>
                     <section>
                         <h2>Duplo fator de autenticação</h2>
+                    </section>
+                    <section>
+                        <img src="img/2fa-googleauth.png" alt="Google Authenticator">
                     </section>
                     <section>
                         <h3>HOTP</h3>
@@ -268,22 +276,18 @@ public fuction generateSecret(string $secret) : string {
                         </ul>
                     </section>
                     <section>
-                        <h3 id="remember-me-good-solution">Solução mais segura</h3>
+                        <h3>Solução mais segura</h3>
                         <ul>
-                            <li class="fragment">Prefixe o <em>token</em> com um <strong>identificador</strong> <strong class="fragment">(NÃO use diretamente o ID do usuário)</strong></li>
-                            <li class="fragment">Crie uma tabela no banco de dados com o identificador acima e apenas o <em>hash</em> do <em>token (SHA-256 ou melhor)</em></li>
-                            <li class="fragment">Ao consultar a tabela, utilize apenas o identificador na Query</li>
-                            <li class="fragment">Faça o <em>hash</em> do <em>token</em> informado no <em>cookie</em> do usuário e compare-o com o que está no banco (novamente, com <code>hash_equals()</code>)</li>
-                            <li class="fragment">Não esqueça de invalidar os <em>tokens</em> do usuário se ele trocar a senha</li>
+                            <li class="fragment">Prefixe o <em>token</em> com um <strong>identificador</strong> <span class="fragment">(NÃO use diretamente o ID do usuário)</span></li>
+                            <li class="fragment">Crie uma tabela no banco de dados com o identificador acima e somente o <em>hash</em> do <em>token (SHA-256 ou melhor)</em></li>
+                            <li class="fragment">Ao consultar a tabela, utilize apenas o identificador na query</li>
+                            <li class="fragment">Faça o <em>hash</em> do <em>token</em> informado no <em>cookie</em> do usuário e compare-o com o que está no banco (com <code>hash_equals()</code>)</li>
                         </ul>
                     </section>
                     <section>
-                        <h3>Referência</h3>
+                        <h3>Referência e biblioteca</h3>
                         <ul>
                             <li><a href="https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-persistence#title.2.1" target="_blank">"Remember Me" - Long-Term Persistent Authentication (Paragon IE)</a></li>
-                        </ul>
-                        <h3>Biblioteca</h3>
-                        <ul>
                             <li><a href="https://github.com/psecio/gatekeeper" target="_blank">psecio/gatekeeper</a></li>
                         </ul>
                     </section>
@@ -302,26 +306,48 @@ public fuction generateSecret(string $secret) : string {
                             <li class="fragment"><a href="https://medium.com/@vasanthavanan59439/ss7-the-deadliest-attack-6423de7fe8c0" target="_blank">SMS não são confiáveis</a></li>
                     </section>
                     <section>
-                        <h3><span class="fragment">Tentativa de</span> Solução</h3>
+                        <h3>Prepare-se!</h3>
                         <ul>
                             <li class="fragment">Realmente avalie se seu sistema precisa dessa funcionalidade automática</li>
                             <li class="fragment"><strong>NÃO</strong> crie uma nova senha e envie por email</li>
-                            <li class="fragment"><strong>NÃO</strong> mande a senha em texto plano por email <em>(?????)</em></li>
-                            <li class="fragment">Utilize a <a href="#remember-me-good-solution">mesma solução</a> do <em>token</em> descrita no slide de "Permanecer logado"</li>
-                            <li class="fragment">Coloque um tempo limite para expiração do <em>token></em></li>
-                            <li class="fragment">Envie o código para o usuário (se for por email, criptografe!)</li>
-                            <li class="fragment">Se o usuário fornecer um usuário que não existe na base, <strong>não</strong> o avise!</li>
+                            <li class="fragment"><strong>NÃO</strong> mande a senha em texto plano por email <em class="fragment">(o quêêê?????)</em></li>
+                            <li class="fragment">Se for fornecido um usuário que não existe na base, <strong>não</strong> o avise!</li>
                         </ul>
                     </section>
                     <section>
-                        <h3>Referências</h3>
+                        <h3><span class="fragment">Tentativa de</span><br>Solução</h3>
+                        <ul>
+                            <li class="fragment">Utilize a <a href="#/7/3">mesma abordagem</a> do <em>token</em> descrita no slide de "Permanecer logado"</li>
+                            <li class="fragment">Coloque um tempo limite para expiração do <em>token</em></li>
+                            <li class="fragment">Envie o código para o usuário (se for por email, criptografe!)</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Referências e biblioteca</h3>
                         <ul>
                             <li><a href="https://paragonie.com/blog/2015/04/secure-authentication-php-with-long-term-persistence#title.2.1" target="_blank">Account Recovery (Paragon IE)</a></li>
                             <li><a href="https://paragonie.com/blog/2016/09/untangling-forget-me-knot-secure-account-recovery-made-simple" target="_blank">Untangling the Forget-Me Knot: Secure Account Recovery Made Simple</a></li>
-                        </ul>
-                        <h3>Biblioteca</h3>
-                        <ul>
                             <li><a href="https://github.com/paragonie/gpg-mailer" target="_blank">paragonie/gpg-mailer</a></li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Login via terceiros</h2>
+                    </section>
+                    <section>
+                        <img src="img/social-login-signup.png" alt="Social Login">
+                    </section>
+                    <section>
+                        <h3>Referências e bibliotecas</h3>
+                        <ul>
+                            <li><a href="https://developers.facebook.com/docs/php/howto/example_facebook_login/" target="_blank">Facebook SDK - Login</a></li>
+                            <li><a href="https://cloud.google.com/php/getting-started/authenticate-users" target="_blank">Google Login</a></li>
+                            <li><a href="https://twitteroauth.com" target="_blank">TwitterOAuth Login</a></li>
+                            <li><a href="https://www.codexworld.com/login-with-github-oauth-api-using-php/" target="_blank">GitHub Login</a></li>
+                            <li><a href="https://github.com/openid/php-openid" target="_blank">openid/php-openid</a></li>
+                            <li><a href="https://auth0.com" target="_blank">Auth0</a></li>
                         </ul>
                     </section>
                 </section>
@@ -352,6 +378,24 @@ public fuction generateSecret(string $secret) : string {
                             <li><a href="https://github.com/thephpleague/oauth2-server" target="_blank">thephpleague/oauth2-server</a></li>
                         </ul>
                     </section>
+                </section>
+                <section>
+                    <h1>Recapitulando...</h1>
+                    <ul>
+                        <li class="fragment">
+                            Login seguro não é trivial<br>
+                            <span class="fragment"><span class="color-transparent">Login seguro não é</span> fácil</span><br>
+                            <span class="fragment"><span class="color-transparent">Login seguro não é</span> para leigos</span>
+                        </li>
+                        <li class="fragment">Mas é <strong>possível</strong>!</li>
+                    </ul>
+                </section>
+                <section>
+                    <h1>Slides</h1>
+                    <img src="img/qrcode.png" alt="QR Code"><br>
+                    <a href="https://viniciuscampitelli.com/slides-mecanismos-autenticacao-seguros/" target="_blank">viniciuscampitelli.com</a>
+                </section>
+                <section>
                 </section>
             </div>
         </div>
