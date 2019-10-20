@@ -73,7 +73,7 @@
                         <blockquote>Mas por que eu preciso disso na tela de login?</blockquote>
                         <p class="fragment">Para garantir que um atacante não faça um usuário passar-se por ele</p>
                     </section>
-                    <section data-transition="none-out">
+                    <section data-transition="none-out convex-in">
                         <h3>Como se proteger? <small class="color-transparent">(continuação)</small></h3>
                         <ul>
                             <li class="fragment">Crie uma sessão "falsa"</li>
@@ -89,7 +89,7 @@
                             <li class="fragment">Se quiser, verifique também o cabeçalho <code>Referer</code> (ou <code>Origin</code>) da requisição para garantir que a origem é do seu site</li>
                         </ul>
                     </section>
-                    <section data-transition="none-out">
+                    <section data-transition="none-out convex-in">
                         <h3>Premissas e recomendações <small class="color-transparent">(continuação)</small></h3>
                         <ul>
                             <li class="fragment">O <em>token</em> não pode se repetir entre usuários diferentes, então é importante utilizar um <a href="https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator" target="_blank">CSPRNG</a> <em>(Cryptographically Secure Pseudo-Random Number Generator)</em></li>
@@ -127,6 +127,7 @@
                     </section>
                     <section>
                         <img src="img/rapidshare-captcha-cats.jpg" alt="CAPTCHA do RapidShare">
+                        <p>Saudades, RapidShare</p>
                     </section>
                     <section>
                         <img src="img/captcha-bug.jpg" alt="CAPTCHA bugs" style="width: 45%;">
@@ -144,7 +145,7 @@
                         </div>
                     </section>
                     <section>
-                        <h3>Referências</h3>
+                        <h3>Bibliotecas</h3>
                         <ul>
                             <li><a href="https://www.google.com/recaptcha/intro/v3.html" target="_blank">reCAPTCHA v3</a></li>
                             <li><a href="https://www.phpcaptcha.org" target="_blank">Securimage PHP CAPTCHA</a></li>
@@ -155,6 +156,9 @@
                 <section>
                     <section>
                         <h2>Duplo fator de autenticação</h2>
+                    </section>
+                    <section>
+                        <img src="img/2fa-googleauth.png" alt="Google Authenticator">
                     </section>
                     <section>
                         <h3>HOTP</h3>
@@ -173,27 +177,28 @@
                         </ul>
                     </section>
                     <section>
-                        <img src="img/2fa-googleauth.png" alt="Google Authenticator">
-                    </section>
-                    <section>
-                        <pre><code class="language-php line-numbers">public function __construct() {
-    $this->authenticator = new \Sonata\GoogleAuthenticator\GoogleAuthenticator();
-    $this->secret = getAuthenticatorSecretFromSomewhere();
+                        <pre><code class="language-php line-numbers">use Sonata\GoogleAuthenticator\GoogleAuthenticator;
+use Sonata\GoogleAuthenticator\GoogleQrUrl;
+
+/* class { ... */
+public function __construct() {
+    $this->authenticator = new GoogleAuthenticator();
+    $this->secret = getSecretFromSomewhere();
 }
 
 public function check(string $code) : bool {
-    return $this->authenticator->checkCode($this->secret, $code);
+    return $this->authenticator->checkCode(
+        $this->secret,
+        $code
+    );
 }
 
 public fuction generateSecret() : string {
-    return $this->authenticator->generateSecret()
+    return $this->authenticator->generateSecret();
 }
 
 public fuction generateSecret(string $secret) : string {
-    return \Sonata\GoogleAuthenticator\GoogleQrUrl::generate(
-        'My App',
-        $secret
-    );
+    return GoogleQrUrl::generate('My App', $secret);
 }</code></pre>
                     </section>
                     <section>
@@ -233,7 +238,10 @@ public fuction generateSecret(string $secret) : string {
     if (! $user) {
         return false;
     }
-    return $this->verifyPassword($password, $user->getPassword());
+    return $this->verifyPassword(
+        $password,
+        $user->getPassword()
+    );
 }</code></pre>
                     </section>
                     <section>
@@ -400,7 +408,7 @@ if (hash_equals($hashedToken, $hashFromDatabase)) {
                     <section>
                         <h2>Autenticação em APIs</h2>
                     </section>
-                    <section data-transition="none-out">
+                    <section data-transition="none-out convex-in">
                         <h3>Dicas <small class="color-transparent">(continuação)</small></h3>
                         <ul>
                             <li class="fragment">Use HTTPS sempre (&hearts; <a href="https://letsencrypt.org" target="_blank">Let's Encrypt</a>)</li>
